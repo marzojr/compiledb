@@ -137,7 +137,7 @@ def parse_build_log(build_log, proj_dir, exclude_files, command_style=False, add
 
             # add entry to database
             tokens = c['tokens']
-            arguments = [unescape(a) for a in tokens[len(wrappers):]]
+            arguments = [a for a in tokens[len(wrappers):]]
 
             compiler = get_compiler(arguments[0])
 
@@ -184,7 +184,7 @@ class CommandProcessor(bashlex.ast.nodevisitor):
        looking for and extracting compilation commands."""
     @staticmethod
     def process(line, wd):
-        trees = bashlex.parser.parse(line)
+        trees = bashlex.parser.parse(unescape(line))
         if not trees:
             return []
         for tree in trees:
@@ -201,7 +201,7 @@ class CommandProcessor(bashlex.ast.nodevisitor):
                 preprocessed[start:end] = out.strip()
             preprocessed = ''.join(preprocessed)
 
-        trees = bashlex.parser.parse(preprocessed)
+        trees = bashlex.parser.parse(unescape(preprocessed))
         processor = CommandProcessor(preprocessed, wd)
         for tree in trees:
             processor.do_process(tree)
@@ -256,6 +256,6 @@ class CommandProcessor(bashlex.ast.nodevisitor):
 
 
 def unescape(s):
-    return s.encode().decode('unicode_escape')
+    return s.encode('unicode_escape').decode()
 
 # ex: ts=2 sw=4 et filetype=python
