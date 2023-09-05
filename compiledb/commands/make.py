@@ -73,6 +73,8 @@ def command(ctx, make_cmd, make_args):
     """Generates compilation database file for an arbitrary GNU Make command.
      Acts like a make wrapper, forwarding all MAKE_ARGS to make command"""
     make_cmd = make_cmd or 'make'
+    if os.uname().sysname == 'OpenBSD':
+        make_cmd = 'gmake'
     logging_mode_flags = "-Bnkw"
 
     options = ctx.obj
